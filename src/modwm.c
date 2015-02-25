@@ -2,11 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include <modwm.h>
 #include <log.h>
 #include <event_process.h>
 #include <window.h>
+#include <frame.h>
 
 static int handle_wm_existance(Display *dpy, XErrorEvent *err_ev);
 static int default_err_handle(Display *dpy, XErrorEvent *err_ev);
@@ -102,6 +104,7 @@ int reparent_windows() {
     struct modwm_Window* window;
     struct modwm_FrameStyle *fstyle;
     struct modwm_Frame *frame;
+    XWindowAttributes attribs;
     if(!state) {
         log_err("reparent_windows(): state=NULL. Exiting\n");
         return 1;
@@ -122,13 +125,11 @@ int reparent_windows() {
     log("Number of windows: %i\n",num_children);
     for(int i = 0;i<num_children;i++) {
         XFetchName(state->root->dpy,children_return[i], &window_name);
+        XGetWindowAttributes(state->root->dpy, children_return[i], &attribs);
         log("Window #%i, Name:%s\n",i,window_name);
         window = window_register(children_return[i], state);
-        //log("ass\n");
         fstyle =  make_default_FrameStyle();
-        //log("asdd\n");
         frame = window_create_frame(window, fstyle, state);
-        log("ssdd\n");
     }
 
     return 0;
@@ -161,17 +162,13 @@ int modwm_add_window(struct modwm_State* state,
                      struct modwm_Window* w) {
     if(!state||!w)
         return 1;
-    //log("asd\n");
     if(state->win_list->num_windows == 
        state->win_list->list_size) {
-        //log("asd\n");
         state->win_list->list_size*=2;
-        //log("asd\n");
         state->win_list->windows = realloc(state->win_list->windows,
                                     sizeof(struct modwm_WindowList)*
                                     state->win_list->list_size);
     }
-    //log("asd\n");
     state->win_list->windows[state->win_list->num_windows++] = w;
     return 0;
 }
