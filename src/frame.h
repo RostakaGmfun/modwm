@@ -18,10 +18,12 @@ struct modwm_Frame {
 
 
 struct modwm_FrameStyle* make_default_FrameStyle();
-struct modwm_Frame* window_create_frame(struct modwm_Window *w, 
-                         struct modwm_FrameStyle *fstyle,
-                         struct modwm_State *state);
-void window_destroy_frame(struct modwm_Window *w, struct modwm_State *state);
-int window_make_bar(struct modwm_Frame* frame, struct modwm_State* state);
+struct modwm_Frame* window_create_frame(struct modwm_State *state,
+                                        struct modwm_Window *w, 
+                                        struct modwm_FrameStyle *fstyle);
+void window_destroy_frame(struct modwm_State *state,
+                          struct modwm_Window *w);
+int window_make_bar(struct modwm_State *state,
+                    struct modwm_Frame* frame);
 
 #endif /* FRAME_H */

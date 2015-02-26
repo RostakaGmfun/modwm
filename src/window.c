@@ -6,8 +6,8 @@
 #include <log.h>
 
 
-struct modwm_Window* window_register(Window region, 
-                         struct modwm_State *state) {
+struct modwm_Window* window_register(struct modwm_State *state,
+                                                 Window region) {
     struct modwm_Window* win = NULL;
     
     if(region==BadWindow)
@@ -17,5 +17,13 @@ struct modwm_Window* window_register(Window region,
     win->frame = NULL;
     modwm_add_window(state, win);
     return win;
+}
+
+void window_unregister(struct modwm_State *state,
+                       struct modwm_Window *window) {
+
+    if(!window||!state)
+        return;
+    modwm_remove_window(state, window);
 }
 

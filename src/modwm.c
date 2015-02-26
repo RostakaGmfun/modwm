@@ -10,10 +10,16 @@
 #include <window.h>
 #include <frame.h>
 
+/*Special X11 error handler used to check for window manager existance */
 static int handle_wm_existance(Display *dpy, XErrorEvent *err_ev);
+/* Default modwm X11 error handler */
 static int default_err_handle(Display *dpy, XErrorEvent *err_ev);
-
+/* reparent all existing windows */
 static int reparent_windows();
+/* detects and registers all childs of root window */
+static int detect_windows();
+/* Reads properties and atoms of windows */
+static int read_windows();
 
 static struct modwm_State *state = NULL;
 
@@ -97,7 +103,8 @@ int handle_wm_existance(Display *dpy, XErrorEvent *err_ev) {
 }
 
 int reparent_windows() {
-    Window *children_return, root_return, parent_return;
+    Window *children_return, 
+            root_return, parent_return;
     unsigned int num_children = 0;
     char *window_name = NULL;
 
@@ -127,9 +134,9 @@ int reparent_windows() {
         XFetchName(state->root->dpy,children_return[i], &window_name);
         XGetWindowAttributes(state->root->dpy, children_return[i], &attribs);
         log("Window #%i, Name:%s\n",i,window_name);
-        window = window_register(children_return[i], state);
+        window = window_register(state, children_return[i]);
         fstyle =  make_default_FrameStyle();
-        frame = window_create_frame(window, fstyle, state);
+        frame = window_create_frame(state, window, fstyle);
     }
 
     return 0;
@@ -158,8 +165,8 @@ void modwm_init_windowList(struct modwm_State* state) {
     state->win_list->list_size = init_winlist_size;
 }
 
-int modwm_add_window(struct modwm_State* state,
-                     struct modwm_Window* w) {
+int modwm_add_window(struct modwm_State *state,
+                         struct modwm_Window *w) {
     if(!state||!w)
         return 1;
     if(state->win_list->num_windows == 
@@ -173,4 +180,23 @@ int modwm_add_window(struct modwm_State* state,
     return 0;
 }
 
-
+void modwm_remove_window(struct modwm_State *state, 
+                        struct modwm_Window *window) {
+    struct modwm_WindowList *wl = NULL;
+    if(!state||!window)
+        return;
+    wl = state->win_list;
+    for(int i = 0; i<wl->num_windows;i++) {
+        if(wl->windows[i]==window) {
+            /* To remove element from array,
+             * the last element is copied to 
+             * the place of element to be removed
+             * and array size is decremented */
+            wl->windows[i] = wl->windows[wl->num_windows];
+            wl->windows[wl->num_windows] = NULL;
+            wl->num_windows--;
+            break;
+        }
+    }
+}
+                        
