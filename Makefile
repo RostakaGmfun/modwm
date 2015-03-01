@@ -6,10 +6,10 @@ OBJECTS=$(SOURCES:.c=.o)
 DEPS=src/modwm.h src/log.h src/error.h src/event_process.h src/window.h src/frame.h
 EXECUTABLE=bin/modwm
 
-all: $(SOURCES) $(HEADERS) $(EXECUTABLE)
+all: $(SOURCES) $(DEPS) $(EXECUTABLE)
     
 $(EXECUTABLE): $(OBJECTS) ;  $(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
-.c.o: ; $(CC) $(CFLAGS) $< -o $@
+.c.o: $(DEPS) ; $(CC) $(CFLAGS) $< -o $@
 
 clean: ; for o in $(OBJECTS) rm o done

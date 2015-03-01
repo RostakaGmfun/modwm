@@ -18,7 +18,7 @@ struct modwm_FrameStyle* make_default_FrameStyle() {
     return fstyle;
 }
 
-struct modwm_Frame* window_create_frame(struct modwm_State *state,
+struct modwm_Frame* frame_create(struct modwm_State *state,
                                         struct modwm_Window* w, 
                                         struct modwm_FrameStyle *fstyle) {
     XWindowAttributes attribs;
@@ -63,3 +63,17 @@ struct modwm_Frame* window_create_frame(struct modwm_State *state,
 
     return frame;
 }
+
+void frame_destroy(struct modwm_State *state,
+                   struct modwm_Window *w) {
+    if(!state||!w)
+        return;
+    XUnmapWindow(state->root->dpy,w->frame->f);
+    XReparentWindow(state->root->dpy, w->region, 
+                    state->root->root, 0, 0);
+    XRemoveFromSaveSet(state->root->dpy, w->region);
+
+    return;
+}
+
+

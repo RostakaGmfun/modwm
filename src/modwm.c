@@ -14,10 +14,8 @@
 static int handle_wm_existance(Display *dpy, XErrorEvent *err_ev);
 /* Default modwm X11 error handler */
 static int default_err_handle(Display *dpy, XErrorEvent *err_ev);
-/* reparent all existing windows */
-static int reparent_windows();
-/* detects and registers all childs of root window */
-static int detect_windows();
+/* detects and reparent all existing windows (called in modwm_init() only once */
+static int detect_reparent_windows();
 /* Reads properties and atoms of windows */
 static int read_windows();
 
@@ -40,7 +38,9 @@ int modwm_init() {
         ButtonPress );
     XSync(state->root->dpy, true);
     XSetErrorHandler(default_err_handle);
-    if(reparent_windows()) {
+
+    state->frame_style = make_default_FrameStyle();
+    if(detect_reparent_windows()) {
         log_err("Failed to reparent windows\n");
         return 1;
     }
@@ -102,7 +102,7 @@ int handle_wm_existance(Display *dpy, XErrorEvent *err_ev) {
     return 0;
 }
 
-int reparent_windows() {
+int detect_reparent_windows() {
     Window *children_return, 
             root_return, parent_return;
     unsigned int num_children = 0;
@@ -111,7 +111,7 @@ int reparent_windows() {
     struct modwm_Window* window;
     struct modwm_FrameStyle *fstyle;
     struct modwm_Frame *frame;
-    XWindowAttributes attribs;
+    
     if(!state) {
         log_err("reparent_windows(): state=NULL. Exiting\n");
         return 1;
@@ -132,11 +132,11 @@ int reparent_windows() {
     log("Number of windows: %i\n",num_children);
     for(int i = 0;i<num_children;i++) {
         XFetchName(state->root->dpy,children_return[i], &window_name);
-        XGetWindowAttributes(state->root->dpy, children_return[i], &attribs);
         log("Window #%i, Name:%s\n",i,window_name);
         window = window_register(state, children_return[i]);
         fstyle =  make_default_FrameStyle();
-        frame = window_create_frame(state, window, fstyle);
+        frame = frame_create(state, window, fstyle);
+        window->frame = frame;
     }
 
     return 0;
@@ -199,4 +199,68 @@ void modwm_remove_window(struct modwm_State *state,
         }
     }
 }
-                        
+
+struct modwm_Window* modwm_find_window(struct modwm_State *state,
+                                       Window win) {
+    if(!state||win==BadWindow)
+        return NULL;
+    struct modwm_WindowList *wl = state->win_list;
+    for(int i = 0;i<wl->num_windows;i++) {
+        if(wl->windows[i]) { /* just to protect ourselves */
+            if(wl->windows[i]->region==win)
+                return wl->windows[i];
+        }
+    }
+    return NULL;
+}
+
+struct modwm_Window* modwm_get_by_frame(struct modwm_State *state,
+                                        Window f) {
+    if(!state||f==BadWindow)
+        return NULL;
+   log("asd\n");
+   struct modwm_WindowList *wl = state->win_list;
+    for(int i = 0;i<wl->num_windows;i++) {
+        if(wl->windows[i]) {
+            if(wl->windows[i]->frame->f==f)
+                return wl->windows[i];
+        }
+    }
+    return NULL;
+}
+
+struct modwm_Window* modwm_register_window(struct modwm_State *state,
+                                           Window win) {
+    if(!state||win==BadWindow)
+        return NULL;
+    struct modwm_Window *window = window_register(state, win);
+
+    return window;
+}
+
+struct modwm_Frame* modwm_frame_window(struct modwm_State *state,
+                                          struct modwm_Window *window,
+                                          struct modwm_FrameStyle *fstyle) {
+    if(!state||!window||!fstyle)
+        return NULL;
+    struct modwm_Frame *frame = frame_create(state, window, fstyle);
+
+    return frame;
+}
+
+void modwm_unframe_window(struct modwm_State *state,
+                          struct modwm_Window *win) {
+    if(!state|!win)
+        return;
+    frame_destroy(state, win);
+    return;
+}
+
+void modwm_unregister_window(struct modwm_State *state,
+                             struct modwm_Window *win) {
+    if(!state||!win)
+        return;
+    window_unregister(state, win);
+    return;
+}
+

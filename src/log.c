@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdarg.h>
-#include "log.h"
+#include <log.h>
 
 /* Taken from Xlib programming Manual ( chapter 8 ) */
 
