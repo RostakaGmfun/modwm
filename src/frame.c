@@ -11,8 +11,8 @@ struct modwm_FrameStyle* make_default_FrameStyle() {
     fstyle = malloc(sizeof(struct modwm_FrameStyle));
     fstyle->bar_width = 24;
     fstyle->border_width=6;
-    fstyle->color1 = 0x292929;
-    fstyle->color2 = 0x393939;
+    fstyle->color1 = 0x494949;
+    fstyle->color2 = 0x696969;
     strcpy(fstyle->position, "NTIMC");
 
     return fstyle;
