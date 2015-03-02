@@ -20,14 +20,15 @@ void on_unmap_notify(struct modwm_State *state, XEvent ev) {
 void on_destroy_notify(struct modwm_State *state, XEvent ev) {
     struct modwm_Window *w = NULL;
     char *window_name = NULL;
-    w = modwm_get_by_frame(state, ev.xdestroywindow.window);
-    log("asd2\n");
-    if(!w) /* check if window registered */
+    if(ev.xdestroywindow.event==BadWindow)
         return;
-    XFetchName(state->root->dpy,ev.xdestroywindow.window, &window_name);
+    w = modwm_get_by_frame(state, ev.xdestroywindow.event);
+   // if(!w) /* check if window registered */
+    //    return;
+    XFetchName(state->root->dpy,ev.xdestroywindow.event, &window_name);
     log("Window Name:%s\n",window_name);
     modwm_unframe_window(state, w);
-    //XDestroyWindow(state->root->dpy, ev.xunmap.window);
+    XDestroyWindow(state->root->dpy, ev.xdestroywindow.event);
     modwm_unregister_window(state, w);
 }
 

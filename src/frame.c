@@ -72,7 +72,7 @@ void frame_destroy(struct modwm_State *state,
     XReparentWindow(state->root->dpy, w->region, 
                     state->root->root, 0, 0);
     XRemoveFromSaveSet(state->root->dpy, w->region);
-
+    XDestroyWindow(state->root->dpy, w->frame->f);
     return;
 }
 
