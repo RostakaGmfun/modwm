@@ -1,6 +1,7 @@
 #include <event_process.h>
 #include <modwm.h>
 #include <log.h>
+#include <frame.h>
 
 void on_create_notify(struct modwm_State *state, XEvent ev) {
 
@@ -35,14 +36,18 @@ void on_destroy_notify(struct modwm_State *state, XEvent ev) {
 void on_button_press(struct modwm_State *state, XEvent ev) {
     struct modwm_Window *win = NULL;
     char *window_name = NULL;
-//    win = modwm_get_by_frame(state, ev.xbutton.window);
-  // if(!win)
-    //    return;
-   // XFetchName(state->root->dpy,ev.xbutton.window, &window_name);
-    //log("Window Name:%s\n",window_name);
-    XRaiseWindow(state->root->dpy, ev.xbutton.window);
-/*    XSetInputFocus(state->root->dpy, ev.xbutton.subwindow,
-                                    RevertToPointerRoot, CurrentTime);*/
+    win = modwm_get_by_frame(state, ev.xbutton.window);
+    if(!win) { /* it is not frame - try checking if it is client window */
+        win = modwm_find_window(state, ev.xbutton.window);
+            if(!win)
+                return;
+            else
+                XRaiseWindow(state->root->dpy, win->frame->f); 
+    }
+    else
+        XRaiseWindow(state->root->dpy, ev.xbutton.window);
+    XSetInputFocus(state->root->dpy, ev.xbutton.window,
+                                    RevertToPointerRoot, CurrentTime);
 }
 
 void on_map_request(struct modwm_State *state, XEvent ev) {

@@ -60,7 +60,9 @@ struct modwm_Frame* frame_create(struct modwm_State *state,
                 SubstructureRedirectMask|
                 SubstructureNotifyMask|ButtonPress);
 
-    //XSelectInput(state->root->dpy, w->region,ButtonPress);
+    XGrabButton(state->root->dpy, Button1, None, 
+                w->region, False, ButtonPressMask,
+                GrabModeAsync, GrabModeAsync, None, None);
 
     XAddToSaveSet(state->root->dpy, w->region);
 
