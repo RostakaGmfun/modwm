@@ -34,10 +34,14 @@ int modwm_init() {
     modwm_init_windowList(state);
     XSetErrorHandler(handle_wm_existance);
     XSelectInput(state->root->dpy, state->root->root, 
-        SubstructureNotifyMask| SubstructureRedirectMask |
-        ButtonPress );
+        SubstructureNotifyMask| SubstructureRedirectMask);
     XSync(state->root->dpy, true);
     XSetErrorHandler(default_err_handle);
+
+/*    XGrabPointer(state->root->dpy, state->root->root,
+                true, ButtonPressMask|ButtonReleaseMask, GrabModeAsync,
+                GrabModeAsync, state->root->root, DefaultCursor, CurrentTime)*/;
+                
 
     state->frame_style = make_default_FrameStyle();
     if(detect_reparent_windows()) {

@@ -35,12 +35,14 @@ void on_destroy_notify(struct modwm_State *state, XEvent ev) {
 void on_button_press(struct modwm_State *state, XEvent ev) {
     struct modwm_Window *win = NULL;
     char *window_name = NULL;
-    win = modwm_get_by_frame(state, ev.xbutton.subwindow);
-    if(!win)
-        return;
-    XRaiseWindow(state->root->dpy, ev.xbutton.subwindow);
-    XSetInputFocus(state->root->dpy, win->region,
-                                    RevertToPointerRoot, CurrentTime);
+//    win = modwm_get_by_frame(state, ev.xbutton.window);
+  // if(!win)
+    //    return;
+   // XFetchName(state->root->dpy,ev.xbutton.window, &window_name);
+    //log("Window Name:%s\n",window_name);
+    XRaiseWindow(state->root->dpy, ev.xbutton.window);
+/*    XSetInputFocus(state->root->dpy, ev.xbutton.subwindow,
+                                    RevertToPointerRoot, CurrentTime);*/
 }
 
 void on_map_request(struct modwm_State *state, XEvent ev) {

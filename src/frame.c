@@ -47,9 +47,10 @@ struct modwm_Frame* frame_create(struct modwm_State *state,
         return NULL;
     }
 
-    log("Created window of size %ix%i at position %i %i\n",attribs.width, attribs.height,
-        attribs.x, attribs.y);
-    XReparentWindow(state->root->dpy, w->region, frame->f,fstyle->border_width,fstyle->bar_width);
+    log("Created window of size %ix%i at position %i %i\n",
+        attribs.width, attribs.height,attribs.x, attribs.y);
+    XReparentWindow(state->root->dpy, w->region, frame->f,
+                    fstyle->border_width,fstyle->bar_width);
     XMapWindow(state->root->dpy, frame->f);
     //XRaiseWindow(state->root->dpy, w->region);
     frame->style = fstyle;
@@ -57,7 +58,9 @@ struct modwm_Frame* frame_create(struct modwm_State *state,
 
     XSelectInput(state->root->dpy,frame->f,
                 SubstructureRedirectMask|
-                SubstructureNotifyMask);
+                SubstructureNotifyMask|ButtonPress);
+
+    //XSelectInput(state->root->dpy, w->region,ButtonPress);
 
     XAddToSaveSet(state->root->dpy, w->region);
 
