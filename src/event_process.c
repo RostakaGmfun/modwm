@@ -36,6 +36,7 @@ void on_destroy_notify(struct modwm_State *state, XEvent ev) {
 void on_button_press(struct modwm_State *state, XEvent ev) {
     struct modwm_Window *win = NULL;
     char *window_name = NULL;
+ 
     win = modwm_get_by_frame(state, ev.xbutton.window);
     if(!win) { /* it is not frame - try checking if it is client window */
         win = modwm_find_window(state, ev.xbutton.window);
@@ -46,8 +47,8 @@ void on_button_press(struct modwm_State *state, XEvent ev) {
     }
     else
         XRaiseWindow(state->root->dpy, ev.xbutton.window);
-    XSetInputFocus(state->root->dpy, ev.xbutton.window,
-                                    RevertToPointerRoot, CurrentTime);
+    /*XSetInputFocus(state->root->dpy, ev.xbutton.window,
+                                    RevertToPointerRoot, CurrentTime);*/
 }
 
 void on_map_request(struct modwm_State *state, XEvent ev) {
@@ -56,6 +57,7 @@ void on_map_request(struct modwm_State *state, XEvent ev) {
     if(!modwm_find_window(state, ev.xmaprequest.window)) {
         win = modwm_register_window(state, ev.xmaprequest.window);
         frame = modwm_frame_window(state, win, state->frame_style);
+        win->frame = frame;
     }
     XMapRaised(state->root->dpy, ev.xmaprequest.window);
 }

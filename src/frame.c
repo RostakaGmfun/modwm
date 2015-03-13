@@ -60,7 +60,7 @@ struct modwm_Frame* frame_create(struct modwm_State *state,
                 SubstructureRedirectMask|
                 SubstructureNotifyMask|ButtonPress);
 
-    XGrabButton(state->root->dpy, Button1, None, 
+     XGrabButton(state->root->dpy, Button1, Mod1Mask, 
                 w->region, False, ButtonPressMask,
                 GrabModeAsync, GrabModeAsync, None, None);
 

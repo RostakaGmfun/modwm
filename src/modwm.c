@@ -35,6 +35,9 @@ int modwm_init() {
     XSetErrorHandler(handle_wm_existance);
     XSelectInput(state->root->dpy, state->root->root, 
         SubstructureNotifyMask| SubstructureRedirectMask);
+    XGrabButton(state->root->dpy, Button1, None, 
+                state->root->root, true, ButtonPressMask,
+                GrabModeAsync, GrabModeAsync, None,state->root->root);
     XSync(state->root->dpy, true);
     XSetErrorHandler(default_err_handle);
 
