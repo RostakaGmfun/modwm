@@ -8,6 +8,10 @@ struct modwm_Window;
 struct modwm_Window {
     Window region;
     struct modwm_Frame *frame;
+    int x;
+    int y;
+    int width;
+    int height;
 };
 
 /* Creates modwm_Window structure from X11 Window and adds window

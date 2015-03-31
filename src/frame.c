@@ -55,7 +55,10 @@ struct modwm_Frame* frame_create(struct modwm_State *state,
     //XRaiseWindow(state->root->dpy, w->region);
     frame->style = fstyle;
     frame->window = w;
-
+    w->x = attribs.x;
+    w->y = attribs.y;
+    w->width = attribs.width;
+    w->height = attribs.height;
     XSelectInput(state->root->dpy,frame->f,
                 SubstructureRedirectMask|
                 SubstructureNotifyMask|ButtonPress);

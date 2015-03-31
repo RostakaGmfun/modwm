@@ -139,6 +139,8 @@ int detect_reparent_windows() {
     log("Number of windows: %i\n",num_children);
     for(int i = 0;i<num_children;i++) {
         window = modwm_register_window(state, children_return[i]);
+        if(!window)
+            continue;
         frame = modwm_frame_window(state, window, state->frame_style);
         window->frame = frame;
     }
@@ -204,7 +206,7 @@ void modwm_remove_window(struct modwm_State *state,
     }
 }
 
-struct modwm_Window* modwm_find_window(struct modwm_State *state,
+struct modwm_Window* modwm_get_window(struct modwm_State *state,
                                        Window win) {
     if(!state||win==BadWindow)
         return NULL;
@@ -240,10 +242,16 @@ struct modwm_Window* modwm_register_window(struct modwm_State *state,
         return NULL;
     char *window_name = NULL;
     struct modwm_Window *window = window_register(state, win);
-    XFetchName(state->root->dpy,win, &window_name);
     log("Registered Window:%s\n",window_name);
 
     return window;
+}
+
+void modwm_read_props(struct modwm_State *state, 
+                      struct modwm_Window *win) {
+    if(!state||!win)
+        return;
+
 }
 
 struct modwm_Frame* modwm_frame_window(struct modwm_State *state,

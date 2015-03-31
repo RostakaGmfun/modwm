@@ -33,6 +33,8 @@ void modwm_cleanup();
 /* WINDOW PROCEDURES */
 struct modwm_Window* modwm_register_window(struct modwm_State *state,
                                            Window win);
+
+void modwm_read_props(struct modwm_State *state, struct modwm_Window *win);
 /* Reparents window and creates frame around it(border and titlebar) */
 struct modwm_Frame* modwm_frame_window(struct modwm_State *state,
                                           struct modwm_Window *window,
